@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'residential-owner',
     component: ResidentialOwnerLayoutComponent,
-    loadChildren: () => import('./features/residential-owner/residentialOwner.routes').then(m => m.RESIDENTIAL_OWNER_ROUTES)
+    loadChildren: () => import('@features/residential-owner/residentialOwner.routes').then(m => m.RESIDENTIAL_OWNER_ROUTES)
   },
   {
     path: '**',

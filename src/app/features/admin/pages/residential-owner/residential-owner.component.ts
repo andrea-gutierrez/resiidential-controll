@@ -36,9 +36,19 @@ export class ResidentialOwnerComponent implements OnInit {
   loadResidentialOwner(): void {
     this.residentialOwnerService.getAll().subscribe({
       next: (data: ResidentialOwner[]) => {
-        this.dataSource = new MatTableDataSource(data);
+        this.setDataSource(data);
       }
     });
+  }
+
+  setDataSource(ownerList: ResidentialOwner[]): void {
+    this.dataSource = new MatTableDataSource(ownerList);
+    this.dataSource.filterPredicate = (data, filter: string): boolean => {
+      return data.name.toLowerCase().includes(filter)
+        || data.email.toLowerCase().includes(filter)
+        || data.document.toLowerCase().includes(filter)
+        || data.tower.toLowerCase().includes(filter);
+    };
   }
 
   applyFilter(event: Event) {

@@ -36,7 +36,7 @@ const residentialOwnerList: ResidentialOwner[] = [
     name: 'Edison',
     email: 'edison@gmail.com',
     document: '11253201',
-    building: '1'
+    building: '1828'
   }
 ];
 
@@ -58,9 +58,9 @@ describe('ResidentialOwnerComponent', () => {
 
     await renderComponent(residentialOwnerServiceMock);
 
-    const rows = screen.getAllByRole('row');
+    const rows = getDataRows();
 
-    expect(rows.length).toBe(residentialOwnerList.length + 1);
+    expect(rows.length).toBe(residentialOwnerList.length);
   });
 
   it('should render the data correctly', async () => {
@@ -90,8 +90,8 @@ describe('ResidentialOwnerComponent', () => {
 
     await user.type(filter, 'ed');
 
-    const rows = screen.getAllByRole('row');
-    expect(rows.length).toBe(1 + 1);
+    const rows = getDataRows();
+    expect(rows.length).toBe(1);
   });
 
   it('should not render the table if there is not data', async () => {
@@ -101,9 +101,31 @@ describe('ResidentialOwnerComponent', () => {
     await renderComponent(residentialOwnerServiceMock);
 
     const filter = screen.queryByLabelText(/Filtro/i);
-    const rows = screen.queryAllByRole('row');
+    const rows = getDataRows();
 
     expect(rows.length).toBe(0);
     expect(filter).toBeNull();
   });
+
+  it('should not filter by a column that does not exist in the table', async () => {
+    const residentialOwnerServiceMock: residentialOwner = {
+      getAll: jest.fn(() => of(residentialOwnerList))
+    }; // the mock value
+
+    const user = userEvent.setup();
+
+    await renderComponent(residentialOwnerServiceMock);
+
+    const filter = screen.getByLabelText(/Filtro/i);
+
+    await user.type(filter, '1828');
+
+    const rows = getDataRows();
+    expect(rows.length).toBe(0);
+  });
 });
+
+const getDataRows = (): HTMLElement[] => {
+  const columnNamesRow = 1;
+  return screen.queryAllByRole('row').slice(columnNamesRow);
+}

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import {render, screen} from '@testing-library/angular';
+import {render, screen, within} from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
 import {of} from "rxjs";
@@ -9,7 +9,8 @@ import {ResidentialOwnerComponent} from './residential-owner.component';
 import {ResidentialOwner} from "../../interfaces/residentialOwner.interface";
 
 interface residentialOwner {
-  getAll: () => void;
+  getAll?: () => void;
+  deleteById?: (id: string) => void;
 }
 
 const renderComponent = async (mock: residentialOwner) => {
@@ -25,6 +26,7 @@ const renderComponent = async (mock: residentialOwner) => {
 
 const residentialOwnerList: ResidentialOwner[] = [
   {
+    id: '3',
     tower: '1',
     name: 'Andrea',
     email: 'andrea@gmail.com',
@@ -32,6 +34,7 @@ const residentialOwnerList: ResidentialOwner[] = [
     building: '123'
   },
   {
+    id: '2',
     tower: '3',
     name: 'Edison',
     email: 'edison@gmail.com',
@@ -39,6 +42,11 @@ const residentialOwnerList: ResidentialOwner[] = [
     building: '1828'
   }
 ];
+
+const getDataRows = (): HTMLElement[] => {
+  const columnNamesRow = 1;
+  return screen.queryAllByRole('row').slice(columnNamesRow);
+}
 
 describe('ResidentialOwnerComponent', () => {
   it('should render the component', async () => {
@@ -53,7 +61,7 @@ describe('ResidentialOwnerComponent', () => {
 
   it('should render the table the number of data that comes from the backend', async () => {
     const residentialOwnerServiceMock: residentialOwner = {
-      getAll: jest.fn(() => of(residentialOwnerList))
+      getAll: jest.fn(() => of([...residentialOwnerList]))
     }; // the mock value
 
     await renderComponent(residentialOwnerServiceMock);
@@ -65,7 +73,7 @@ describe('ResidentialOwnerComponent', () => {
 
   it('should render the data correctly', async () => {
     const residentialOwnerServiceMock: residentialOwner = {
-      getAll: jest.fn(() => of(residentialOwnerList))
+      getAll: jest.fn(() => of([...residentialOwnerList]))
     }; // the mock value
 
     await renderComponent(residentialOwnerServiceMock);
@@ -79,7 +87,7 @@ describe('ResidentialOwnerComponent', () => {
 
   it('should show the rows that contain "ed" in the name column', async () => {
     const residentialOwnerServiceMock: residentialOwner = {
-      getAll: jest.fn(() => of(residentialOwnerList))
+      getAll: jest.fn(() => of([...residentialOwnerList]))
     }; // the mock value
 
     const user = userEvent.setup();
@@ -109,7 +117,7 @@ describe('ResidentialOwnerComponent', () => {
 
   it('should not filter by a column that does not exist in the table', async () => {
     const residentialOwnerServiceMock: residentialOwner = {
-      getAll: jest.fn(() => of(residentialOwnerList))
+      getAll: jest.fn(() => of([...residentialOwnerList]))
     }; // the mock value
 
     const user = userEvent.setup();
@@ -123,9 +131,25 @@ describe('ResidentialOwnerComponent', () => {
     const rows = getDataRows();
     expect(rows.length).toBe(0);
   });
-});
 
-const getDataRows = (): HTMLElement[] => {
-  const columnNamesRow = 1;
-  return screen.queryAllByRole('row').slice(columnNamesRow);
-}
+  it('should remove the row from the table when the button delete is pressed and the back return a successful status', async () => {
+    const residentialOwnerServiceMock: residentialOwner = {
+      getAll: jest.fn(() => of([...residentialOwnerList])),
+      deleteById: jest.fn(() => of({status: 200}))
+    }; // the mock value
+
+    const user = userEvent.setup();
+
+    await renderComponent(residentialOwnerServiceMock);
+
+    const rows = getDataRows();
+    const indexToDelete = 1;
+    const targetRow = rows[indexToDelete];
+    const buttonDelete = within(targetRow).getByRole('button');
+
+    await user.click(buttonDelete);
+
+    const updatedRows = getDataRows();
+    expect(updatedRows.length).toBe(residentialOwnerList.length - 1);
+  });
+});

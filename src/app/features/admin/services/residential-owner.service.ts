@@ -23,8 +23,12 @@ export class ResidentialOwnerService {
       .pipe(
         map((data) => data.result),
         catchError(() => {
-          return throwError(() => 'There were an error');
+          return throwError(() => 'There was an error');
         })
       );
+  }
+
+  public deleteById(document: string) {
+    return this.http.delete(`${this.residentialOwnerUrl}/${document}`);
   }
 }

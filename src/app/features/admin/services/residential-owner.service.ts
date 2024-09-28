@@ -1,9 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {map, Observable, tap} from "rxjs";
+import {catchError, map, Observable, throwError} from "rxjs";
 
 import {environment} from "../../../../environments/environment";
+
+import {ResidentialOwner} from "../interfaces/residentialOwner.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +17,14 @@ export class ResidentialOwnerService {
   constructor() {
   }
 
-  public getAll(): Observable<any[]> {
+  public getAll(): Observable<ResidentialOwner[]> {
     return this.http
       .get<any>(this.residentialOwnerUrl)
       .pipe(
-        map((data) => data.result)
+        map((data) => data.result),
+        catchError(() => {
+          return throwError(() => 'There were an error');
+        })
       );
   }
 }

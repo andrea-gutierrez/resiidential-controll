@@ -1,9 +1,12 @@
 import {Component, inject, OnInit} from '@angular/core';
+
 import {
   MatTable,
   MatTableModule
 } from "@angular/material/table";
+
 import {ResidentialOwnerService} from "../../services/residential-owner.service";
+import {ResidentialOwner} from "../../interfaces/residentialOwner.interface";
 
 @Component({
   selector: 'app-residential-owner',
@@ -17,9 +20,9 @@ import {ResidentialOwnerService} from "../../services/residential-owner.service"
 })
 export class ResidentialOwnerComponent implements OnInit {
   private residentialOwnerService = inject(ResidentialOwnerService);
-  public residentialOwnerList: any[] = [];
+  public residentialOwnerList: ResidentialOwner[] = [];
 
-  public displayedColumns: string[] = ['name'];
+  public displayedColumns: string[] = ['Nombre', 'Documento', 'Email', 'Torre'];
 
   constructor() {
   }
@@ -30,7 +33,7 @@ export class ResidentialOwnerComponent implements OnInit {
 
   loadResidentialOwner(): void {
     this.residentialOwnerService.getAll().subscribe({
-      next: (data) => {
+      next: (data: ResidentialOwner[]) => {
         this.residentialOwnerList = data;
       }
     });

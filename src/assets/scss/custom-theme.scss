@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+
+// Define a light color palette similar to Apple's design
+$apple-primary: mat.m2-define-palette(mat.$m2-light-blue-palette, 500, 300, 700);
+$apple-accent: mat.m2-define-palette(mat.$m2-blue-palette, A200, A100, A400);
+$apple-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// Create a light theme using the defined palettes
+$apple-light-theme: mat.m2-define-light-theme(
+    (
+      color: (
+        primary: $apple-primary,
+        accent: $apple-accent,
+        warn: $apple-warn
+      )
+    )
+);
+
+@include mat.all-component-themes($apple-light-theme);

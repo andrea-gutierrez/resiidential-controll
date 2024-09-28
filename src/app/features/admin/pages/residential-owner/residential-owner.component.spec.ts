@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import {render, screen} from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 
 import {of} from "rxjs";
 
@@ -74,5 +75,35 @@ describe('ResidentialOwnerComponent', () => {
       expect(screen.getByText(residentialOwner.email)).toBeInTheDocument();
       expect(screen.getByText(residentialOwner.document)).toBeInTheDocument();
     })
+  });
+
+  it('should show the rows that contain "ed" in the name column', async () => {
+    const residentialOwnerServiceMock: residentialOwner = {
+      getAll: jest.fn(() => of(residentialOwnerList))
+    }; // the mock value
+
+    const user = userEvent.setup();
+
+    await renderComponent(residentialOwnerServiceMock);
+
+    const filter = screen.getByLabelText(/Filtro/i);
+
+    await user.type(filter, 'ed');
+
+    const rows = screen.getAllByRole('row');
+    expect(rows.length).toBe(1 + 1);
+  });
+
+  it('should not render the table if there is not data', async () => {
+    const residentialOwnerServiceMock: residentialOwner = {
+      getAll: jest.fn(() => of([]))
+    }; // the mock value
+    await renderComponent(residentialOwnerServiceMock);
+
+    const filter = screen.queryByLabelText(/Filtro/i);
+    const rows = screen.queryAllByRole('row');
+
+    expect(rows.length).toBe(0);
+    expect(filter).toBeNull();
   });
 });

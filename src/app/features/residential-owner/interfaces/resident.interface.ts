@@ -1,6 +1,6 @@
 export interface Resident {
   document: string;
-  documentType:string;
+  documentType: string;
   password: string;
   plate: string;
   vehicleType: string;
@@ -11,7 +11,11 @@ export interface Resident {
   phone: string;
   tower: string;
   apartment: string;
-  roles: string[];
+  role: string;
   qrId: string;
   isActive: boolean;
+}
+
+export interface ResidentDisplay extends Resident {
+  fullName: string;
 }

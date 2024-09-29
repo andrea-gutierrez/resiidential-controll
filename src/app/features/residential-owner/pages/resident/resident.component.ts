@@ -1,16 +1,19 @@
 import {Component, inject, OnInit} from '@angular/core';
+
 import {
   MatCell,
   MatCellDef,
   MatColumnDef,
   MatHeaderCell, MatHeaderCellDef,
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable,
-  MatTableDataSource
 } from "@angular/material/table";
+import {MatButton} from "@angular/material/button";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
 
 import {ResidentService} from "../../services/resident.service";
-import {Resident} from "../../interfaces/resident.interface";
-import {MatButton} from "@angular/material/button";
+import {Resident, ResidentDisplay} from "../../interfaces/resident.interface";
+import {TableBase} from "../../../../shared/base/table.base";
 
 @Component({
   selector: 'app-resident',
@@ -26,17 +29,23 @@ import {MatButton} from "@angular/material/button";
     MatRow,
     MatRowDef,
     MatTable,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatFormField,
+    MatInput,
+    MatLabel
   ],
   templateUrl: './resident.component.html',
   styleUrl: './resident.component.scss'
 })
-export class ResidentComponent implements OnInit {
+export class ResidentComponent extends TableBase<ResidentDisplay> implements OnInit {
   private residentService = inject(ResidentService);
+  private filterList: string[] = ['name', 'email'];
 
-  public displayedColumns: string[] = ['Nombre', 'Documento', 'Email', 'Torre'];
+  public displayedColumns: string[] = ['Nombre', 'Documento', 'Email', 'Torre', 'Acciones'];
 
-  dataSource: MatTableDataSource<Resident> = new MatTableDataSource();
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
     this.loadResidents();
@@ -45,13 +54,25 @@ export class ResidentComponent implements OnInit {
   private loadResidents(): void {
     this.residentService.getAll().subscribe({
       next: (data: Resident[]) => {
-        this.setDataSource(data);
+        const residentList = this.mapData(data);
+        this.setDataSource(residentList);
+        this.setFilterBy(this.filterList);
       }
     });
   }
 
-  private setDataSource(ownerList: Resident[]): void {
-    this.dataSource.data = ownerList;
-    this.dataSource._updateChangeSubscription();
+  private mapData(data: Resident[]): ResidentDisplay[] {
+    return data.map((resident: Resident) => ({
+      ...resident,
+      fullName: `${resident.name} ${resident.lastname}`
+    }));
+  }
+
+  public onDelete(resident: ResidentDisplay): void {
+    this.residentService.deleteById(resident.document).subscribe({
+      next: () => {
+        this.deleteRow(resident);
+      }
+    });
   }
 }

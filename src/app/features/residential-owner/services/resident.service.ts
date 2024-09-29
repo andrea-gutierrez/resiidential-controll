@@ -7,28 +7,27 @@ import {environment} from "../../../../environments/environment";
 import {Resident} from "../interfaces/resident.interface";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ResidentService {
-    private http = inject(HttpClient);
-    private residentsUrl = `${environment.BACKEND}/residents`;
+  private http = inject(HttpClient);
+  private residentsUrl = `${environment.BACKEND}/residents`;
 
-    constructor() {
-    }
+  constructor() {
+  }
 
-    public getAll(): Observable<Resident[]> {
-        return this.http
-            .get<any>(this.residentsUrl)
-            .pipe(
-                map((data) => {
-                    return data.result.map((resident: Resident) => ({
-                        ...resident,
-                        fullName: `${resident.name} ${resident.lastname}`
-                    }));
-                }),
-                catchError(() => {
-                    return throwError(() => 'There was an error');
-                })
-            );
-    }
+  public getAll(): Observable<Resident[]> {
+    return this.http
+      .get<any>(this.residentsUrl)
+      .pipe(
+        map((data) => data.result),
+        catchError(() => {
+          return throwError(() => 'There was an error');
+        })
+      );
+  }
+
+  public deleteById(document: string) {
+    return this.http.delete(`${this.residentsUrl}/${document}`);
+  }
 }

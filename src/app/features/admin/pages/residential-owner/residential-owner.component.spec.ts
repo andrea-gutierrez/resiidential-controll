@@ -152,4 +152,22 @@ describe('ResidentialOwnerComponent', () => {
     const updatedRows = getDataRows();
     expect(updatedRows.length).toBe(residentialOwnerList.length - 1);
   });
+
+  describe('form dialog', () => {
+    it('should open the form when the button "Nuevo" is clicked', async () => {
+      const residentialOwnerServiceMock: residentialOwner = {
+        getAll: jest.fn(() => of([])),
+      };
+
+      const user = userEvent.setup();
+
+      await renderComponent(residentialOwnerServiceMock);
+
+      const buttonNew = screen.getByText('Nuevo');
+      await user.click(buttonNew);
+      const formDialog = screen.getByText('Crear Propietario');
+
+      expect(formDialog).toBeInTheDocument();
+    });
+  });
 });

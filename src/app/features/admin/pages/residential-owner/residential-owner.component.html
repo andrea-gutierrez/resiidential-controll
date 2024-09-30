@@ -1,5 +1,7 @@
 <p>Bienvenidos a residencia</p>
 
+<button mat-raised-button (click)="onOpenForm()">Nuevo</button>
+
 @if (dataSource.data.length > 0) {
   <mat-form-field>
     <mat-label>Filtro</mat-label>

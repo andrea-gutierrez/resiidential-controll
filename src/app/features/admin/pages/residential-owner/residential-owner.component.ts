@@ -5,11 +5,13 @@ import {
 } from "@angular/material/table";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatDialog} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 
 import {ResidentialOwnerService} from "../../services/residential-owner.service";
 import {ResidentialOwner} from "../../interfaces/residentialOwner.interface";
 import {TableBase} from "../../../../shared/base/table.base";
+import {FormComponent} from "../../components/form/form.component";
 
 @Component({
   selector: 'app-residential-owner',
@@ -21,7 +23,8 @@ import {TableBase} from "../../../../shared/base/table.base";
   styleUrl: './residential-owner.component.scss'
 })
 export class ResidentialOwnerComponent extends TableBase<ResidentialOwner> implements OnInit {
-  private residentialOwnerService = inject(ResidentialOwnerService);
+  private readonly residentialOwnerService = inject(ResidentialOwnerService);
+  private readonly dialog = inject(MatDialog);
   private filterList: string[] = ['name', 'email', 'document', 'tower'];
 
   public displayedColumns: string[] = ['Nombre', 'Documento', 'Email', 'Torre', 'Acciones'];
@@ -49,5 +52,12 @@ export class ResidentialOwnerComponent extends TableBase<ResidentialOwner> imple
         this.deleteRow(residentialOwner);
       }
     })
+  }
+
+  public onOpenForm(): void {
+    let dialogRef = this.dialog.open(FormComponent, {
+      height: '400px',
+      width: '600px',
+    });
   }
 }

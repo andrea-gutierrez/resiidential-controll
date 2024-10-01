@@ -6,7 +6,9 @@ const defaultErrors: {
 } = {
   required: () => ErrorMessages.Required,
   nonLetter: () => ErrorMessages.NonLetter,
-  specialCharacter: () => ErrorMessages.SpeecialCharacter
+  specialCharacter: () => ErrorMessages.SpecialCharacter,
+  nonEmail: () => ErrorMessages.NonEmail,
+  nonNumber: () => ErrorMessages.NonNumber,
 };
 
 export const FORM_ERRORS = new InjectionToken('FORM_ERRORS', {

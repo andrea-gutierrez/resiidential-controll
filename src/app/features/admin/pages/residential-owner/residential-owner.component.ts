@@ -9,7 +9,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 
 import {ResidentialOwnerService} from "../../services/residential-owner.service";
-import {ResidentialOwner} from "../../interfaces/residentialOwner.interface";
+import {ResidentialOwner} from "../../interfaces/residential-owner.interface";
 import {TableBase} from "../../../../shared/base/table.base";
 import {FormComponent} from "../../components/form/form.component";
 

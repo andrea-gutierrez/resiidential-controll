@@ -5,7 +5,7 @@ import {catchError, map, Observable, throwError} from "rxjs";
 
 import {environment} from "../../../../environments/environment";
 
-import {ResidentialOwner} from "../interfaces/residentialOwner.interface";
+import {ResidentialOwner} from "../interfaces/residential-owner.interface";
 
 @Injectable({
   providedIn: 'root'

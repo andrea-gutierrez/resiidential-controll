@@ -6,7 +6,7 @@ import {of} from "rxjs";
 
 import {ResidentialOwnerService} from "../../services/residential-owner.service";
 import {ResidentialOwnerComponent} from './residential-owner.component';
-import {ResidentialOwner} from "../../interfaces/residentialOwner.interface";
+import {ResidentialOwner} from "../../interfaces/residential-owner.interface";
 
 interface residentialOwner {
   getAll?: () => void;

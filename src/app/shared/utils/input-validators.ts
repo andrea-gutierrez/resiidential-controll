@@ -10,7 +10,7 @@ export function lettersValidator(): ValidatorFn {
 
 export function specialCharacterValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const hasSpecialCharacter = /^[a-zA-Z0-9^_=!#$%&()*+\-.:'\/?@ ]*$/.test(control.value);
+    const hasSpecialCharacter = /[^A-Za-z 0-9]/g.test(control.value);
 
     return hasSpecialCharacter ? {specialCharacter: true} : null;
   }

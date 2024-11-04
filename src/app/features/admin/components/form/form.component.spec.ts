@@ -3,9 +3,25 @@ import {render, screen} from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
 
 import {FormComponent} from "./form.component";
+import {ErrorMessages} from "../../../../shared/constants/error-messages";
+import {of} from "rxjs";
+import {ResidentialOwnerService} from "../../services/residential-owner.service";
 
-const renderComponent = async () => {
-  return render(FormComponent, {});
+interface residentialOwner {
+  getAll?: () => void;
+  deleteById?: (id: string) => void;
+  save?: (owner: any) => void;
+}
+
+const renderComponent = async (mock?: residentialOwner) => {
+  return render(FormComponent, {
+    providers: [
+      {
+        provide: ResidentialOwnerService,
+        useValue: mock
+      }
+    ]
+  });
 }
 describe('Residential owner FormComponent', () => {
   it('should render the component', async () => {
@@ -55,10 +71,10 @@ describe('Residential owner FormComponent', () => {
       await renderComponent();
 
       const input = screen.getByLabelText(/Documento/i);
-      await user.type(input, '32313');
+      await user.type(input, '12345');
       await user.tab();
 
-      expect(screen.queryByText('El campo no puede contener caracteres especiales')).toBeNull();
+      expect(screen.queryByText(ErrorMessages.SpecialCharacter)).toBeNull();
     });
 
     it('should show the message "Este campo no puede contener caracteres especiales" when input has special characters', async () => {
@@ -69,7 +85,7 @@ describe('Residential owner FormComponent', () => {
       await user.type(input, 'and-rea');
       await user.tab();
 
-      expect(screen.queryByText('Este campo no puede contener caracteres especiales')).toBeInTheDocument();
+      expect(screen.queryByText(ErrorMessages.SpecialCharacter)).toBeInTheDocument();
     });
 
     it('should show the message "Este campo es requerido" when the input is empty', async () => {
@@ -81,7 +97,7 @@ describe('Residential owner FormComponent', () => {
       await user.clear(input);
       await user.tab();
 
-      expect(screen.queryByText('Este campo es requerido')).toBeInTheDocument();
+      expect(screen.queryByText(ErrorMessages.Required)).toBeInTheDocument();
     });
   });
 
@@ -94,7 +110,7 @@ describe('Residential owner FormComponent', () => {
       await user.type(input, 'testing@hotmail.com');
       await user.tab();
 
-      expect(screen.queryByText('El campo no es un email válido')).toBeNull();
+      expect(screen.queryByText(ErrorMessages.NonEmail)).toBeNull();
     });
 
     it('should show the message "Este campo es requerido" when the input is empty', async () => {
@@ -106,7 +122,7 @@ describe('Residential owner FormComponent', () => {
       await user.clear(input);
       await user.tab();
 
-      expect(screen.queryByText('Este campo es requerido')).toBeInTheDocument();
+      expect(screen.queryByText(ErrorMessages.Required)).toBeInTheDocument();
     });
 
     it('should show the message "El campo es inválido, debe ser un email válido" when the input is empty', async () => {
@@ -117,7 +133,7 @@ describe('Residential owner FormComponent', () => {
       await user.type(input, 'andre@gmail');
       await user.tab();
 
-      expect(screen.queryByText('El campo es inválido, debe ser un email válido')).toBeInTheDocument();
+      expect(screen.queryByText(ErrorMessages.NonEmail)).toBeInTheDocument();
     });
 
     describe('input Tower', () => {
@@ -129,7 +145,7 @@ describe('Residential owner FormComponent', () => {
         await user.type(input, '12');
         await user.tab();
 
-        expect(screen.queryByText('El campo solo puede contener números')).toBeNull();
+        expect(screen.queryByText(ErrorMessages.NonNumber)).toBeNull();
       });
 
       it('should show the message "Este campo es requerido" when the input is empty', async () => {
@@ -141,7 +157,7 @@ describe('Residential owner FormComponent', () => {
         await user.clear(input);
         await user.tab();
 
-        expect(screen.queryByText('Este campo es requerido')).toBeInTheDocument();
+        expect(screen.queryByText(ErrorMessages.Required)).toBeInTheDocument();
       });
     });
 
@@ -154,7 +170,7 @@ describe('Residential owner FormComponent', () => {
         await user.type(input, '12');
         await user.tab();
 
-        expect(screen.queryByText('El campo solo puede contener números')).toBeNull();
+        expect(screen.queryByText(ErrorMessages.NonNumber)).toBeNull();
       });
 
       it('should show the message "Este campo es requerido" when the input is empty', async () => {
@@ -166,21 +182,41 @@ describe('Residential owner FormComponent', () => {
         await user.clear(input);
         await user.tab();
 
-        expect(screen.queryByText('Este campo es requerido')).toBeInTheDocument();
+        expect(screen.queryByText(ErrorMessages.Required)).toBeInTheDocument();
       });
     });
   });
 
   describe('action "Guardar"', () => {
-    it('should save the information when the button is pressed', async () => {
+    it('should save the information and show a successful popUp when the button is pressed and the info is correct', async () => {
+      const residentialOwnerServiceMock: residentialOwner = {
+        save: jest.fn(() => of({}))
+      }
       const user = userEvent.setup();
-      await renderComponent();
+      await renderComponent(residentialOwnerServiceMock);
+
+      const name = screen.getByLabelText(/Nombre/i);
+      await user.type(name, 'Andrea');
+
+      const document = screen.getByLabelText(/Documento/i);
+      await user.type(document, '1123334321');
+
+      const tower = screen.getByLabelText(/Torre/i);
+      await user.type(tower, '2');
+
+      const building = screen.getByLabelText(/Apartamento/i);
+      await user.type(building, '32');
+
+      const email = screen.getByLabelText(/Email/i);
+      await user.type(email, 'andre@gmail.com');
 
       const buttonSave = screen.getByRole('button', {name: /Guardar/i});
 
       await user.click(buttonSave);
 
-      expect(false).toBeTruthy();
+      const popUp = screen.getByText('Fue guardado con éxito');
+
+      expect(popUp).toBeInTheDocument();
     });
   });
 });

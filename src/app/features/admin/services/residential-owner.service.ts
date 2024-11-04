@@ -31,4 +31,8 @@ export class ResidentialOwnerService {
   public deleteById(document: string) {
     return this.http.delete(`${this.residentialOwnerUrl}/${document}`);
   }
+
+  public save(residentialOwner: ResidentialOwner): Observable<ResidentialOwner> {
+    return this.http.post<ResidentialOwner>(`${this.residentialOwnerUrl}`, residentialOwner);
+  }
 }

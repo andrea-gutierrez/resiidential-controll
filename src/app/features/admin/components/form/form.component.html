@@ -1,22 +1,20 @@
 <h2 mat-dialog-title>Crear Propietario</h2>
 <mat-dialog-content>
   <form [formGroup]="form">
-    <mat-grid-list cols="2" rowHeight="100px">
+    <div class="grid grid-cols-2 gap-3">
       @for (formInput of formInputList; track formInput.controlName) {
-        <mat-grid-tile>
-          <mat-form-field>
-            <mat-label>{{ formInput.label }}</mat-label>
-            <input [formControlName]="formInput.controlName" [type]="formInput.inputType" matInput>
-            <mat-error>
-              <app-form-error-message [controlName]="formInput.controlName"/>
-            </mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
+        <mat-form-field>
+          <mat-label>{{ formInput.label }}</mat-label>
+          <input [formControlName]="formInput.controlName" [type]="formInput.inputType" matInput>
+          <mat-error>
+            <app-form-error-message [controlName]="formInput.controlName"/>
+          </mat-error>
+        </mat-form-field>
       }
-    </mat-grid-list>
+    </div>
   </form>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions class="flex justify-end">
   <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button [mat-dialog-close]="true">Guardar</button>
+  <button mat-raised-button (click)="onSave()">Guardar</button>
 </mat-dialog-actions>

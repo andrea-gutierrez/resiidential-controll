@@ -1,6 +1,10 @@
 @import "assets/css/normalize.css";
 @import 'assets/scss/custom-theme.scss';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 .mat-card, .mat-button, .mat-form-field {
   border-radius: 12px; // Apple-style rounded corners
